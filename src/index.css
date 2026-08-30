@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --background: 222 47% 5%;
+    --foreground: 210 40% 95%;
+
+    --card: 224 44% 8%;
+    --card-foreground: 210 40% 95%;
+
+    --popover: 224 44% 8%;
+    --popover-foreground: 210 40% 95%;
+
+    --primary: 265 85% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 224 30% 14%;
+    --secondary-foreground: 210 40% 95%;
+
+    --muted: 224 30% 14%;
+    --muted-foreground: 215 20% 55%;
+
+    --accent: 38 95% 58%;
+    --accent-foreground: 222 47% 5%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 224 25% 16%;
+    --input: 224 25% 16%;
+    --ring: 265 85% 65%;
+
+    --radius: 0.75rem;
+
+    /* Custom brand tokens */
+    --brand-violet: 265 85% 65%;
+    --brand-violet-dark: 265 80% 45%;
+    --brand-amber: 38 95% 58%;
+    --brand-cyan: 192 85% 55%;
+    --brand-green: 142 70% 45%;
+    --surface-1: 224 44% 8%;
+    --surface-2: 224 35% 11%;
+    --surface-3: 224 30% 14%;
+    --glow-violet: rgba(147, 51, 234, 0.15);
+    --glow-amber: rgba(251, 191, 36, 0.15);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .glow-violet {
+    box-shadow: 0 0 20px var(--glow-violet), 0 0 40px var(--glow-violet);
+  }
+
+  .glow-amber {
+    box-shadow: 0 0 20px var(--glow-amber), 0 0 40px var(--glow-amber);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, hsl(265 85% 75%), hsl(38 95% 68%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-surface-1 { background-color: hsl(var(--surface-1)); }
+  .bg-surface-2 { background-color: hsl(var(--surface-2)); }
+  .bg-surface-3 { background-color: hsl(var(--surface-3)); }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: hsl(var(--surface-1)); }
+::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(var(--primary)); }
+
+/* Agent pulse animation */
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes agent-flow {
+  0% { stroke-dashoffset: 100; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(147,51,234,0.1) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
