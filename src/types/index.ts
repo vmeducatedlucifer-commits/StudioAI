@@ -23,6 +23,7 @@ export interface Agent {
   currentTask?: string;
   output?: string;
   hfModel?: string;
+  error?: string;
 }
 
 export interface VideoProject {
@@ -39,23 +40,28 @@ export interface VideoProject {
   audioAssets?: AudioAsset[];
   thumbnail?: string;
   outputUrl?: string;
+  outputManifest?: string;
+  error?: string;
 }
 
 export interface Scene {
   id: string;
   index: number;
+  title?: string;
   description: string;
   imageUrl?: string;
   duration: number;
   caption?: string;
+  narration?: string;
 }
 
 export interface AudioAsset {
   id: string;
   type: 'voiceover' | 'music' | 'sfx';
-  url?: string;
+  url: string | null;
   description: string;
   duration?: number;
+  sceneIndex?: number;
 }
 
 export interface TokenStats {

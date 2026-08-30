@@ -1,50 +1,75 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import type { VideoProject, Agent } from '@/types';
 import { SAMPLE_PROJECTS } from '@/constants';
 
 const STORAGE_KEY = 'video_projects';
 
-export function useProjects() {
-  const [projects, setProjects] = useState<VideoProject[]>(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) return JSON.parse(raw);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(SAMPLE_PROJECTS));
-      return SAMPLE_PROJECTS;
-    } catch {
-      return SAMPLE_PROJECTS;
+function loadProjects(): VideoProject[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      // Reset any "processing" projects on reload (they won't auto-resume)
+      return parsed.map((p: VideoProject) =>
+        p.status === 'processing'
+          ? { ...p, status: 'failed', error: 'Session interrupted — please recreate this project' }
+          : p
+      );
     }
-  });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(SAMPLE_PROJECTS));
+    return SAMPLE_PROJECTS;
+  } catch {
+    return SAMPLE_PROJECTS;
+  }
+}
 
-  const saveProjects = (updated: VideoProject[]) => {
+export function useProjects() {
+  const [projects, setProjects] = useState<VideoProject[]>(loadProjects);
+
+  const saveProjects = useCallback((updated: VideoProject[]) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     setProjects(updated);
-  };
+  }, []);
 
-  const addProject = (project: VideoProject) => {
-    const updated = [project, ...projects];
-    saveProjects(updated);
-  };
-
-  const updateProject = (id: string, updates: Partial<VideoProject>) => {
-    const updated = projects.map(p => p.id === id ? { ...p, ...updates } : p);
-    saveProjects(updated);
-  };
-
-  const updateAgent = (projectId: string, agentId: string, updates: Partial<Agent>) => {
-    const updated = projects.map(p => {
-      if (p.id !== projectId) return p;
-      return {
-        ...p,
-        agents: p.agents.map(a => a.id === agentId ? { ...a, ...updates } : a),
-      };
+  const addProject = useCallback((project: VideoProject) => {
+    setProjects(prev => {
+      const updated = [project, ...prev];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
     });
-    saveProjects(updated);
-  };
+  }, []);
 
-  const deleteProject = (id: string) => {
-    saveProjects(projects.filter(p => p.id !== id));
-  };
+  const updateProject = useCallback((id: string, updates: Partial<VideoProject>) => {
+    setProjects(prev => {
+      const updated = prev.map(p => p.id === id ? { ...p, ...updates } : p);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
+  const updateAgent = useCallback((projectId: string, agentId: string, updates: Partial<Agent>) => {
+    setProjects(prev => {
+      const updated = prev.map(p => {
+        if (p.id !== projectId) return p;
+        return {
+          ...p,
+          agents: p.agents.map(a =>
+            a.id === agentId ? { ...a, ...updates } : a
+          ),
+        };
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
+  const deleteProject = useCallback((id: string) => {
+    setProjects(prev => {
+      const updated = prev.filter(p => p.id !== id);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
 
   return { projects, addProject, updateProject, updateAgent, deleteProject };
 }

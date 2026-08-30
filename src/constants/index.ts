@@ -9,21 +9,23 @@ export const VIDEO_FORMATS: { value: VideoFormat; label: string; aspect: string;
 
 export const HF_MODELS = {
   image: [
-    { id: 'stabilityai/stable-diffusion-xl-base-1.0', label: 'SDXL Base 1.0' },
-    { id: 'black-forest-labs/FLUX.1-dev', label: 'FLUX.1 Dev' },
-    { id: 'ByteDance/SDXL-Lightning', label: 'SDXL Lightning' },
+    { id: 'stabilityai/stable-diffusion-xl-base-1.0', label: 'SDXL Base 1.0 (Primary)' },
+    { id: 'runwayml/stable-diffusion-v1-5', label: 'SD v1.5 (Fallback)' },
+    { id: 'black-forest-labs/FLUX.1-dev', label: 'FLUX.1 Dev (Pro)' },
   ],
   video: [
-    { id: 'ali-vilab/i2vgen-xl', label: 'I2VGen-XL' },
+    { id: 'ali-vilab/i2vgen-xl', label: 'I2VGen-XL (Scene Animation)' },
     { id: 'stabilityai/stable-video-diffusion-img2vid', label: 'SVD Img2Vid' },
   ],
   audio: [
-    { id: 'facebook/musicgen-medium', label: 'MusicGen Medium' },
-    { id: 'suno-ai/bark', label: 'Bark TTS' },
-    { id: 'cvssp/audioldm2', label: 'AudioLDM 2 (SFX)' },
+    { id: 'facebook/musicgen-small', label: 'MusicGen Small (Primary)' },
+    { id: 'facebook/musicgen-medium', label: 'MusicGen Medium (Fallback)' },
+    { id: 'facebook/fastspeech2-en-ljspeech', label: 'FastSpeech2 TTS (Primary)' },
+    { id: 'espnet/kan-bayashi_ljspeech_vits', label: 'VITS TTS (Fallback)' },
   ],
-  caption: [
-    { id: 'Salesforce/blip2-opt-2.7b', label: 'BLIP-2' },
+  text: [
+    { id: 'mistralai/Mistral-7B-Instruct-v0.2', label: 'Mistral 7B Instruct (Primary)' },
+    { id: 'HuggingFaceH4/zephyr-7b-beta', label: 'Zephyr 7B Beta (Fallback)' },
   ],
 };
 
@@ -33,34 +35,34 @@ export const AGENT_DEFINITIONS = [
     name: 'Script Writer',
     type: 'script' as const,
     hfModel: 'mistralai/Mistral-7B-Instruct-v0.2',
-    tasks: ['Analyzing prompt', 'Generating story structure', 'Writing scene scripts', 'Refining dialogue'],
+    tasks: ['Analyzing prompt', 'Generating story structure', 'Writing scene scripts', 'Parsing scenes'],
   },
   {
     id: 'image',
     name: 'Scene Visualizer',
     type: 'image' as const,
-    hfModel: 'black-forest-labs/FLUX.1-dev',
-    tasks: ['Parsing scene descriptions', 'Generating visual prompts', 'Rendering images via HF Spaces', 'Applying style consistency'],
+    hfModel: 'stabilityai/stable-diffusion-xl-base-1.0',
+    tasks: ['Loading SDXL model', 'Generating visual prompts', 'Rendering scene images', 'Applying style consistency'],
   },
   {
     id: 'audio',
     name: 'Audio Producer',
     type: 'audio' as const,
-    hfModel: 'suno-ai/bark + facebook/musicgen-medium',
-    tasks: ['Generating voiceover scripts', 'Synthesizing voice (Bark)', 'Creating background music', 'Adding SFX layers'],
+    hfModel: 'facebook/fastspeech2-en-ljspeech',
+    tasks: ['Preparing narration scripts', 'Synthesizing voiceover', 'Composing background music', 'Mixing audio layers'],
   },
   {
     id: 'compiler',
     name: 'Video Compiler',
     type: 'compiler' as const,
     hfModel: 'ali-vilab/i2vgen-xl',
-    tasks: ['Aligning scenes with audio', 'Applying transitions', 'Rendering captions', 'Exporting final video'],
+    tasks: ['Aligning scenes with audio', 'Applying transitions', 'Rendering captions', 'Finalizing output manifest'],
   },
 ];
 
 export const SAMPLE_PROJECTS = [
   {
-    id: '1',
+    id: 'sample-1',
     title: 'AI Future Documentary',
     prompt: 'A cinematic story about AI changing human civilization in 2050',
     format: 'movie' as VideoFormat,
@@ -73,7 +75,7 @@ export const SAMPLE_PROJECTS = [
     audioAssets: [],
   },
   {
-    id: '2',
+    id: 'sample-2',
     title: 'Viral Motivation Reel',
     prompt: 'Motivational short reel with fire visuals and epic music',
     format: 'reels' as VideoFormat,
@@ -81,18 +83,6 @@ export const SAMPLE_PROJECTS = [
     createdAt: '2026-08-29T08:00:00Z',
     completedAt: '2026-08-29T08:08:00Z',
     thumbnail: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=400&q=80',
-    agents: [],
-    scenes: [],
-    audioAssets: [],
-  },
-  {
-    id: '3',
-    title: 'Space Exploration Short',
-    prompt: 'YouTube short about Mars colonization with stunning visuals',
-    format: 'shorts' as VideoFormat,
-    status: 'processing' as const,
-    createdAt: '2026-08-30T09:00:00Z',
-    thumbnail: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&q=80',
     agents: [],
     scenes: [],
     audioAssets: [],
